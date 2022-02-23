@@ -6,10 +6,12 @@
 
 # Traffic data
 # https://datos.madrid.es/sites/v/index.jsp?vgnextoid=33cb30c367e78410VgnVCM1000000b205a0aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD
-
+import os
 
 madrid_data_dir = "data/Madrid"
+madrid_proc_dir = "data/Madrid_Processed"
 zip_dir = "data/Madrid/Zip_folders"
+madrid_all_file = os.path.join(madrid_proc_dir, "madrid_all_df.pkl")
 pollutant_dict_madrid = {
     1: "SO2",
     6: "CO",
@@ -21,33 +23,31 @@ pollutant_dict_madrid = {
 }
 
 station_prefix = "280790"
+station_prefix_number = 100*int(station_prefix)
 
 # Some stations changed the number during time => here we create a dict to unify the numbers using the convention
 # old : new
 station_code_dict = {
-    "03": "35",
-    "05": "39",
-    "10": "38",
-    "13": "40",
-    "20": "36",
-    "86": "60",
+    3: 35,
+    5: 39,
+    10: 38,
+    13: 40,
+    20: 36,
+    86: 60,
 }
 
 
-def convert_station_number(number_str):
+def convert_station_number(number):
     """Convert station numbers ensuring that the number is the new one
 
-    :param number_str: number string
-    :type number_str:  str
-    :return: new number string
-    :rtype: str
+    :param number: number
+    :type number: int
+    :return: new number
+    :rtype: int
     """
-    if not number_str.startswith(station_prefix):
-        raise ValueError(f"{number_str} must start with prefix {station_prefix}")
-    suffix = number_str[len(station_prefix):]
-    if suffix in station_code_dict.keys():
-        suffix = station_code_dict[suffix]
-    return station_prefix + suffix
+    if number in station_code_dict.keys():
+        number = station_code_dict[number]
+    return number
 
 # Column variables
 
@@ -55,3 +55,4 @@ def convert_station_number(number_str):
 useless_col = ['PROVINCIA', 'MUNICIPIO', 'PUNTO_MUESTREO']
 station_col = "ESTACION"
 pollutant_col = 'MAGNITUD'
+date_columns = ['ANO', 'MES', 'DIA']
