@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 data/
-treated_data/
+analysis/
 .idea/

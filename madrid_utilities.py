@@ -9,6 +9,9 @@
 import os
 
 madrid_data_dir = "data/Madrid"
+madrid_analysis_dir = "analysis/Madrid"
+madrid_corr_dir = os.path.join(madrid_analysis_dir, "corr")
+madrid_stat_dir = os.path.join(madrid_analysis_dir, "stat")
 madrid_proc_dir = "data/Madrid_Processed"
 zip_dir = "data/Madrid/Zip_folders"
 madrid_all_file = os.path.join(madrid_proc_dir, "madrid_all_df.pkl")
@@ -19,8 +22,20 @@ pollutant_dict_madrid = {
     8: "NO2",
     9: "PM25",
     10: "PM10",
+    12: "NOx",
     14: "O3",
 }
+
+
+def is_relevant_pollutant(x):
+    """Returns whether x is a relevant pollutant
+
+    :param x: pollutant code
+    :type x: int
+    :return: whether x is a relevant pollutant
+    :rtype: bool
+    """
+    return x in pollutant_dict_madrid.keys()
 
 station_prefix = "280790"
 station_prefix_number = 100*int(station_prefix)
@@ -53,6 +68,10 @@ def convert_station_number(number):
 
 
 useless_col = ['PROVINCIA', 'MUNICIPIO', 'PUNTO_MUESTREO']
-station_col = "ESTACION"
-pollutant_col = 'MAGNITUD'
+station_col = "station"
+pollutant_col = 'pollutant'
+station_col_old = "ESTACION"
+pollutant_col_old = 'MAGNITUD'
 date_columns = ['ANO', 'MES', 'DIA']
+concentration_col = "concentration"
+datetime_col = "datetime"

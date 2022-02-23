@@ -1,15 +1,14 @@
 import os
-
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from datetime import datetime
-from madrid_utilities import madrid_data_dir, convert_station_number, useless_col, station_col, date_columns, \
-    madrid_all_file
+from madrid_utilities import madrid_data_dir, convert_station_number, useless_col, station_col_old, date_columns, \
+    madrid_all_file, pollutant_col_old, pollutant_dict_madrid, concentration_col, datetime_col, pollutant_col,\
+    station_col, is_relevant_pollutant
 
-datetime_col = "datetime"
 valid_col = "valid"
 hour_col = "hour"
-concentration_col = "concentration"
 
 
 def get_year_directories(data_dir):
@@ -62,6 +61,9 @@ def open_clean_df(filename):
     """
     data = pd.read_csv(filename, sep=";")
     data.drop(useless_col, axis=1, inplace=True)
+    data.columns = [x if x != pollutant_col_old else pollutant_col for x in data.columns]
+    data.columns = [x if x != station_col_old else station_col for x in data.columns]
+    data = data[data[pollutant_col].apply(is_relevant_pollutant)]
     return data
 
 
@@ -107,7 +109,7 @@ def convert_from_year_df(data):
                               value_name=valid_col)
     melted_hour_df[valid_col] = melted_valid_df[valid_col].apply(lambda x: x == "V")
     melted_hour_df[datetime_col] = melted_hour_df[date_columns + [hour_col]].apply(cols2datetime, axis=1)
-    melted_hour_df[concentration_col] = melted_valid_df[[concentration_col, valid_col]].apply(value_valid_mix, axis=1)
+    melted_hour_df[concentration_col] = melted_hour_df[[concentration_col, valid_col]].apply(value_valid_mix, axis=1)
     melted_hour_df.drop(date_columns + [hour_col, valid_col], axis=1, inplace=True)
     return melted_hour_df
 
@@ -122,16 +124,14 @@ def extract_all_ts(data_dir):
     """
     year_dirs = get_year_directories(data_dir)
     all_df = pd.concat([convert_from_year_df(open_year_dir(dir_path=os.path.join(data_dir, year_dir)))
-                        for year_dir in year_dirs], axis=0)
+                        for year_dir in tqdm(year_dirs)], axis=0)
+    all_df.reset_index(inplace=True, drop=True)
+    all_df[station_col] = all_df[station_col].apply(int)
+    all_df[pollutant_col] = all_df[pollutant_col].apply(int)
+    all_df[pollutant_col] = all_df[pollutant_col].apply(lambda x: pollutant_dict_madrid[x])
     return all_df
 
 
 if __name__ == "__main__":
-    year_dirs = get_year_directories(data_dir=madrid_data_dir)
-    df_list = [open_year_dir(dir_path=os.path.join(madrid_data_dir, year_dir)) for year_dir in year_dirs]
-    df_list = df_list[:3]
-    converted_list = [convert_from_year_df(el) for el in df_list]
-    some_df = pd.concat(converted_list, axis=0)
-    some_df.to_pickle("ciao.pkl")
     all_df = extract_all_ts(data_dir=madrid_data_dir)
     all_df.to_pickle(madrid_all_file)
