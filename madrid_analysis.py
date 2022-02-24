@@ -90,6 +90,7 @@ def save_corr_mat(df, discriminant_column, group_name):
     plt.ylabel(group_name)
     plt.savefig(os.path.join(madrid_corr_dir, f"{discriminant_column}_{discriminant_value}_corr.png"))
     plt.close()
+    corr.to_pickle(os.path.join(madrid_corr_dir, f"{discriminant_column}_{discriminant_value}_corr.pkl"))
 
 
 def get_stat(df, discriminant_column):
