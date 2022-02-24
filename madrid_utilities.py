@@ -24,6 +24,15 @@ pollutant_dict_madrid = {
     10: "PM10",
     12: "NOx",
     14: "O3",
+#    20: "TOL",
+#    30: "BEN",
+#    35: "EBE",
+#    37: "MXY",
+#    38: "PXY",
+#    39: "OXY",
+#    42: "TCH",
+#    43: "CH4",
+#    44: "NMHC",
 }
 
 
@@ -36,6 +45,7 @@ def is_relevant_pollutant(x):
     :rtype: bool
     """
     return x in pollutant_dict_madrid.keys()
+
 
 station_prefix = "280790"
 station_prefix_number = 100*int(station_prefix)
