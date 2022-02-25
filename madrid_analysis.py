@@ -4,24 +4,11 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from common_utilities import clean_analysis_dir
 from madrid_utilities import madrid_corr_dir, madrid_stat_dir, madrid_all_file, madrid_analysis_dir, pollutant_col,\
     station_col, concentration_col, datetime_col
 
 # https://matplotlib.org/stable/tutorials/colors/colormaps.html
-
-
-def clean_analysis_dir():
-    """Cleans the analysis directory from previously created files.
-
-    """
-    for file in os.listdir(madrid_stat_dir):
-        os.remove(os.path.join(madrid_stat_dir, file))
-    for file in os.listdir(madrid_corr_dir):
-        os.remove(os.path.join(madrid_corr_dir, file))
-    for file in os.listdir(madrid_analysis_dir):
-        path = os.path.join(madrid_analysis_dir, file)
-        if not os.path.isdir(path):
-            os.remove(path=path)
 
 
 def fill_missing_df(missing_dict):
@@ -185,10 +172,10 @@ def disc_analysis(df, discriminant_column, pivot_column, value_column):
 
 
 def full_analysis(file):
-    """
+    """Performs the full analysis of a dataframe using both station_col and pollutant_col as discriminant_column
 
     :param file:
-    :return:
+    :type file: str
     """
     df = pd.read_pickle(file)
     disc_analysis(df, discriminant_column=station_col, pivot_column=pollutant_col, value_column=concentration_col)
@@ -196,7 +183,7 @@ def full_analysis(file):
 
 
 if __name__ == "__main__":
-    clean_analysis_dir()
+    clean_analysis_dir(analysis_dir=madrid_analysis_dir)
     file = madrid_all_file
     #  file = "ciao.pkl"
     full_analysis(file=file)
