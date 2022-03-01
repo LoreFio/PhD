@@ -1,8 +1,9 @@
 import os
-import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from datetime import datetime
+
+from common_utilities import value_valid_mix
 from madrid_utilities import madrid_data_dir, convert_station_number, useless_col, station_col_old, date_columns, \
     madrid_all_file, pollutant_col_old, pollutant_dict_madrid, concentration_col, datetime_col, pollutant_col,\
     station_col, is_relevant_pollutant
@@ -76,20 +77,6 @@ def cols2datetime(x):
     :rtype: datetime.datetime
     """
     return datetime(year=x[0], month=x[1], day=x[2], hour=int(x[3][1:])-1)
-
-
-def value_valid_mix(x):
-    """Convert value to np.nan if value is not valid
-
-    :param x: iterable containing value and validity boolean
-    :type x: iterable
-    :return: value or np.nan
-    :rtype: float
-    """
-    if x[1]:
-        return x[0]
-    else:
-        return np.nan
 
 
 def convert_from_year_df(data):
